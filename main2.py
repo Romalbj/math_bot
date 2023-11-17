@@ -10,15 +10,20 @@ response = requests.get(f'http://api.wolframalpha.com/v2/query',
                             'input': query
                         })
 output = response.text
-split_Results_output = output.split("Results'\n")
-print(split_Results_output)
+if  "<pod title='Result'" in output:
+    split_Results_output = output.split("<pod title='Result'\n")
+elif "<pod title='Results'" in output:
+    split_Results_output = output.split("<pod title='Results'\n")
+
 split_Results_output.pop(0)
+#print(split_Results_output)
 serching_for_answers = split_Results_output[0].split('       ')
+#print(serching_for_answers)
 
 final = []
 for el in range(len(serching_for_answers)):
     if "alt='x =" in serching_for_answers[el]:
-        final.append(serching_for_answers[el].strip('alt=').strip("'"))
+        final.append(serching_for_answers[el].strip('alt='))
 
 for answer in final:
     print(answer)
