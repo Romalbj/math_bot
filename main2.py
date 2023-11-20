@@ -36,7 +36,6 @@ for line in final:
     print(line)
 
 
-
 #меняем аутпут для задания функции
 query_for_plot = query_for_plot.replace('^', '**').strip('solve').replace('cos', 'mpmath.cos'). \
     replace('tan', 'mpmath.tan').replace('cot', 'mpmath.cot').replace(' sin', 'math.sin')
@@ -56,15 +55,72 @@ if '=' in query_for_plot:
 
 
 xs = []
-#print( type(''.join(results_str)))
+
 #if '=' in results_str or '≈' in ', '.join(results_str):
- #   for x in results_str:
-  #      if '=' in x:
-   #         xs.append(x[x.index('=') + 1:])
-    #    elif '≈' in x:
-     #       xs.append(x[x.index('≈') + 1:])
+for x in results_str:
+    if '=' in x and '±' not in x:
+        xs.append(x[x.index('=') + 1:].strip("'").strip('...'))
+    elif '=' in x and '±' in x:# and '√' not in x:
+        xs.append(x[x.index('=') + 1:].strip("'").strip('...').replace('±', '').strip(' '))
+        xs.append(x[x.index('=') + 1:].strip("'").strip('...').replace('±', '').strip(' '))
+        xs[0] = '-' + xs[0]
+        xs[1] = ' ' + xs[1]
+    elif '≈' in x:
+        xs.append(x[x.index('≈') + 1:].strip("'").strip('...'))
+
+results_float = []
+for i in xs:
+
+    if '√' in i:
+
+        if len(i.split('√'))>2:
+            pass
+
+        else:
+
+            if len(i.split('√')[0]) == 1:
+                i = i.replace('√', 'math.sqrt')
+                results_float.append(eval(i))
+
+            elif isinstance(int(i[i.index('√')-2]), int):
+                i = i.split('√')
+                i = '* math.sqrt'.join(i)
+                results_float.append(eval(i))
+
+            else:
+                i = i.replace('√', 'math.sqrt')
+                results_float.append(eval(i))
+    else:
+        results_float.append(eval(i))
 
 
+global  x_max
+x_max = 3
+
+global  x_min
+x_min = -3
+
+def max_min_x():
+    global x_max
+    global x_min
+
+    try:
+        if 'sin' in query or 'cos' in query or 'tan' in query or 'cot' in query:
+            x_max = 1
+            x_min = -1
+        elif '>' in query or '<' in query:
+            pass
+        elif len(results_float) < 1:
+            pass
+        else:
+            x_max = (max(results_float))
+            x_min = (min(results_float))
+        return x_min, x_max
+    except NameError:
+        return -1
+
+
+max_min_x()
 
 
     #переводим str в function
@@ -72,18 +128,17 @@ def str_to_func(string):
     return lambda x: eval(string)
 
 
-print(results_str)
 if '=' in ''.join(results_str) or '≈' in ''.join(results_str):
     func_before = str_to_func(query_before_)
     func_after = str_to_func(query_after_)
 
         #строим графики
-    xlist1 = np.linspace(-2, 2, num=100)
+    xlist1 = np.linspace(x_min-1, x_max+1, num=100)
     ylist1 = [func_before(x) for x in xlist1]
 
     plt.plot(xlist1, ylist1)
 
-    xlist2 = np.linspace(-2, 2, num=100)
+    xlist2 = np.linspace(x_min-1, x_max+1, num=100)
     ylist2 = [func_after(x) for x in xlist2]
 
 
