@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import mpmath
 from selenium import webdriver
+import math
 
 AppID_full = 'G39592-5E4JX9R2AK'
 query = str(input())
@@ -37,8 +38,8 @@ for line in final:
 
 
 #меняем аутпут для задания функции
-query_for_plot = query_for_plot.replace('^', '**').strip('solve ').replace('cos', 'mpmath.cos'). \
-    replace('sin', 'mpmath.sin').replace('tan', 'mpmath.tan').replace('cot', 'mpmath.cot').replace('in', 'mpmath.sin')
+query_for_plot = query_for_plot.replace('^', '**').strip('solve').replace('cos', 'mpmath.cos'). \
+    replace('tan', 'mpmath.tan').replace('cot', 'mpmath.cot').replace(' sin', 'math.sin')
 
 
 query_before_ = ''
@@ -71,7 +72,8 @@ def str_to_func(string):
     return lambda x: eval(string)
 
 
-if '=' in ''.join(results_str):
+print(results_str)
+if '=' in ''.join(results_str) or '≈' in ''.join(results_str):
     func_before = str_to_func(query_before_)
     func_after = str_to_func(query_after_)
 
