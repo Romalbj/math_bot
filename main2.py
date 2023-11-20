@@ -55,31 +55,33 @@ if '=' in query_for_plot:
 
 
 xs = []
-if '=' in results_str or '≈' in results_str:
-    for x in results_str:
-        if '=' in x:
-            xs.append(x[x.index('=') + 1:])
-        elif '≈' in x:
-            xs.append(x[x.index('≈') + 1:])
+#print( type(''.join(results_str)))
+#if '=' in results_str or '≈' in ', '.join(results_str):
+ #   for x in results_str:
+  #      if '=' in x:
+   #         xs.append(x[x.index('=') + 1:])
+    #    elif '≈' in x:
+     #       xs.append(x[x.index('≈') + 1:])
 
 
 
 
     #переводим str в function
-    def str_to_func(string):
-        return lambda x: eval(string)
+def str_to_func(string):
+    return lambda x: eval(string)
 
 
+if '=' in ''.join(results_str):
     func_before = str_to_func(query_before_)
     func_after = str_to_func(query_after_)
 
-    #строим графики
-    xlist1 = np.linspace(-3, 3, num=100)
+        #строим графики
+    xlist1 = np.linspace(-2, 2, num=100)
     ylist1 = [func_before(x) for x in xlist1]
 
     plt.plot(xlist1, ylist1)
 
-    xlist2 = np.linspace(-3, 3, num=100)
+    xlist2 = np.linspace(-2, 2, num=100)
     ylist2 = [func_after(x) for x in xlist2]
 
 
