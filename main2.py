@@ -1,6 +1,7 @@
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
+import mpmath
 from selenium import webdriver
 
 AppID_full = 'G39592-5E4JX9R2AK'
@@ -15,72 +16,85 @@ response = requests.get(f'http://api.wolframalpha.com/v2/query',
                             'input': query
                         })
 output = response.text
-if  "<pod title='Result'" in output:
-    split_Results_output = output.split("<pod title='Result'\n")
-elif "<pod title='Results'" in output:
-    split_Results_output = output.split("<pod title='Results'\n")
 
 
 
-split_Results_output.pop(0)
-serching_for_answers = split_Results_output[0].split('       ')
-
-
+serching_for_answers = output.split('       ')
 final = []
-for el in range(len(serching_for_answers)):
-    if 'щ' in serching_for_answers[el]:
-        final.append(serching_for_answers[el])
-
+for el in serching_for_answers:
+    if 'alt=' in el and 'щ' in el and 'solve' not in el:
+        final.append(el.strip())
 
 
 #printing the answer
+results_str = []
 for line in final:
-    if 'alt=' in line and 'щ' in line:
-        line = line.strip('alt=')
-        line = line.replace('&lt;', '<')
-        line = line.replace('sqrt', '√')
-        line = line.replace('щ', 'x')
-        print(line)
+    line = line.strip('alt=').replace('&lt;', '<').replace('&gt;', '>').\
+        replace('sqrt', '√').replace('щ', 'x')
+    results_str.append(line)
+    print(line)
 
-#меняем инпут для задания функции
-query_for_plot = query_for_plot.replace('^', '**').strip('solve ')
+
+
+#меняем аутпут для задания функции
+query_for_plot = query_for_plot.replace('^', '**').strip('solve ').replace('cos', 'mpmath.cos'). \
+    replace('sin', 'mpmath.sin').replace('tan', 'mpmath.tan').replace('cot', 'mpmath.cot').replace('in', 'mpmath.sin')
 
 
 query_before_ = ''
-for i in query_for_plot[:query_for_plot.index('=')]:
-    if i != '=':
-        query_before_ += i
-
-
 query_after_ = ''
-
-for i in query_for_plot[query_for_plot.index('='):]:
-    if i != '=':
-        query_after_ += i
-
-#переводим str в function
-def str_to_func(string):
-    return lambda x: eval(string)
+if '=' in query_for_plot:
+    for i in query_for_plot[:query_for_plot.index('=')]:
+        if i != '=':
+            query_before_ += i
 
 
-func_before = str_to_func(query_before_)
-func_after = str_to_func(query_after_)
-
-#строим графики
-xlist1 = np.linspace(-2, 2, num=100)
-ylist1 = [func_before(x) for x in xlist1]
-
-plt.plot(xlist1, ylist1)
+    for i in query_for_plot[query_for_plot.index('='):]:
+        if i != '=':
+            query_after_ += i
 
 
-xlist2 = np.linspace(-2, 2, num=100)
-ylist2 = [func_after(x) for x in xlist2]
+xs = []
+if '=' in results_str or '≈' in results_str:
+    for x in results_str:
+        if '=' in x:
+            xs.append(x[x.index('=') + 1:])
+        elif '≈' in x:
+            xs.append(x[x.index('≈') + 1:])
 
-plt.plot(xlist2, ylist2)
 
-plt.title(query_for_plot)
 
-plt.axvline(x=0, c="black", label="x=0")
-plt.axhline(y=0, c="black", label="y=0")
 
-plt.show()
+    #переводим str в function
+    def str_to_func(string):
+        return lambda x: eval(string)
+
+
+    func_before = str_to_func(query_before_)
+    func_after = str_to_func(query_after_)
+
+    #строим графики
+    xlist1 = np.linspace(-3, 3, num=100)
+    ylist1 = [func_before(x) for x in xlist1]
+
+    plt.plot(xlist1, ylist1)
+
+    xlist2 = np.linspace(-3, 3, num=100)
+    ylist2 = [func_after(x) for x in xlist2]
+
+
+    plt.plot(xlist2, ylist2)
+
+    plt.title(query.replace('щ', 'x').strip('solve '))
+
+    plt.axvline(x=0, c="black", label="x=0")
+    plt.axhline(y=0, c="black", label="y=0")
+
+    plt.show()
+
+
+
+
+
+
+
