@@ -209,6 +209,7 @@ def plot():
 
         plt.title(query.replace('щ', 'x').strip('solve '))
         plt.savefig("plot.png")
+        plt.clf()
 
 
 
