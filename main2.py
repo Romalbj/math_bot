@@ -207,7 +207,7 @@ def plot():
 
         plt.plot(xlist2, ylist2)
 
-        plt.title(query.replace('щ', 'x').strip('solve '))
+        plt.title(query.replace('щ', 'x').strip('solve'))
         plt.savefig("plot.png")
         plt.clf()
 
