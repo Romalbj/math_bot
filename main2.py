@@ -1,12 +1,11 @@
 from aiogram import Bot, Dispatcher, types
 import asyncio
 from aiogram.filters import CommandStart,  Command
-from aiogram import F
-
-
+from aiogram.types import InputFile
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import mpmath
 import math
 
@@ -48,7 +47,7 @@ global query
 query = ''
 
 global query_for_plot
-query_for_plot = query
+query_for_plot = ''
 
 global results_str
 results_str = []
@@ -56,10 +55,11 @@ results_str = []
 
 def solve_math():
     global query
+    global query_for_plot
     global results_str
 
     query = 'solve ' + query
-    print(query)
+    query_for_plot = query
 
     AppID_full = 'G39592-5E4JX9R2AK'
 
@@ -92,11 +92,7 @@ def solve_math():
     return results_str
 
 
-@dp.message()
-async def solve(message: types.Message):
-    global query
-    query =str( message.text)
-    await message.answer(text=str('\n'.join(solve_math())))
+
 
 def plot():
     global query_for_plot
@@ -122,7 +118,6 @@ def plot():
 
     xs = []
 
-    #if '=' in results_str or '≈' in ', '.join(results_str):
     for x in results_str:
         if '=' in x and '±' not in x:
             xs.append(x[x.index('=') + 1:].strip("'").strip('...'))
@@ -207,15 +202,38 @@ def plot():
         xlist2 = np.linspace(x_min-1, x_max+1, num=100)
         ylist2 = [func_after(x) for x in xlist2]
 
+        plt.axvline(x=0, c="black", label="x=0")
+        plt.axhline(y=0, c="black", label="y=0")
 
         plt.plot(xlist2, ylist2)
 
         plt.title(query.replace('щ', 'x').strip('solve '))
+        plt.savefig("plot.png")
 
-        plt.axvline(x=0, c="black", label="x=0")
-        plt.axhline(y=0, c="black", label="y=0")
 
-        plt.show()
+
+
+
+@dp.message()
+async def solve(message: types.Message):
+    global query
+    global query_for_plot
+
+    query = str(message.text)
+    query_for_plot = query
+    answer = str('\n\n'.join(solve_math())).replace("'", '')
+    plot()
+
+    if os.path.isfile("plot.png"):
+
+        photo_path = ('/Users/romanzavarzin/PycharmProjects/math_tg_bot/plot.png')
+        await message.answer(text=answer)
+        await message.reply_photo(photo=types.FSInputFile(path=photo_path))
+        os.remove("/Users/romanzavarzin/PycharmProjects/math_tg_bot/plot.png")
+
+    else:
+        await message.answer(text=answer)
+
 
 
 async def main():
