@@ -17,7 +17,7 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start_command(message: types.Message):
-    await message.answer(text=f'Здорова, тупик: {message.from_user.username}')
+    await message.answer(text=f'Здорова, тупенький: {message.from_user.username}')
 
 
 @dp.message(Command('help'))
@@ -121,7 +121,7 @@ def plot():
     for x in results_str:
         if '=' in x and '±' not in x:
             xs.append(x[x.index('=') + 1:].strip("'").strip('...'))
-        elif '=' in x and '±' in x:# and '√' not in x:
+        elif '=' in x and '±' in x:
             xs.append(x[x.index('=') + 1:].strip("'").strip('...').replace('±', '').strip(' '))
             xs.append(x[x.index('=') + 1:].strip("'").strip('...').replace('±', '').strip(' '))
             xs[0] = '-' + xs[0]
