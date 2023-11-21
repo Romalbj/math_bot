@@ -222,13 +222,16 @@ async def solve(message: types.Message):
 
     query = str(message.text)
     query_for_plot = query
+    await message.answer(text='Считаю✏️🗒️...')
     answer = str('\n\n'.join(solve_math())).replace("'", '')
     plot()
 
     if os.path.isfile("plot.png"):
 
         photo_path = ('/Users/romanzavarzin/PycharmProjects/math_tg_bot/plot.png')
+
         await message.answer(text=answer)
+        await message.answer(text='Рисую🎨🖼️...')
         await message.reply_photo(photo=types.FSInputFile(path=photo_path))
         os.remove("/Users/romanzavarzin/PycharmProjects/math_tg_bot/plot.png")
 
