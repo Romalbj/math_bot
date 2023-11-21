@@ -1,9 +1,50 @@
+from aiogram import Bot, Dispatcher, types
+import asyncio
+from aiogram.filters import CommandStart,  Command
+from aiogram import F
+
+
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
 import mpmath
-from selenium import webdriver
 import math
+
+
+Bot_token = '6805987386:AAEYrzVkVv4ZR1hhKz5PSVMScHrW8_XBoxk'
+bot = Bot(Bot_token)
+dp = Dispatcher()
+
+
+@dp.message(CommandStart())
+async def start_command(message: types.Message):
+    await message.answer(text=f'Здорова, тупик: {message.from_user.username}')
+
+
+@dp.message(Command('help'))
+async def help_command(message: types.Message):
+    await message.answer(text='''
+Могу решать уравнения и неравенства, а также рисовать графики.
+Вот правила ввода данных: 
+- знак степени - ^
+- знак умножения - *
+- знак деления - /
+- квадратный корень - ^1/2
+- синус - sin
+- косинус - cos
+- тангенс - tan
+- котангенс - cot
+- знак больше - >
+- знак меньше - <''')
+
+
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+
 
 AppID_full = 'G39592-5E4JX9R2AK'
 query = str(input())
