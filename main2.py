@@ -74,7 +74,6 @@ def solve_math():
     output = response.text
 
 
-
     serching_for_answers = output.split('       ')
     final = []
     for el in serching_for_answers:
@@ -89,7 +88,10 @@ def solve_math():
         line = line.strip('alt=').replace('&lt;', '<').replace('&gt;', '>').\
             replace('sqrt', '√').replace('щ', 'x')
         results_str.append(line)
-    return results_str
+
+    if len(results_str) >=1:
+        return results_str
+    return '‼️'
 
 
 
@@ -224,6 +226,9 @@ async def solve(message: types.Message):
     query_for_plot = query
     await message.answer(text='Считаю✏️🗒️...')
     answer = str('\n\n'.join(solve_math())).replace("'", '')
+    if '‼' in answer:
+        answer = 'Решений нет🫤'
+
     plot()
 
     if os.path.isfile("plot.png"):
