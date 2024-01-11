@@ -10,7 +10,7 @@ import mpmath
 import math
 
 
-Bot_token = '6805987386:AAEYrzVkVv4ZR1hhKz5PSVMScHrW8_XBoxk'
+Bot_token = #######
 bot = Bot(Bot_token)
 dp = Dispatcher()
 
@@ -61,7 +61,7 @@ def solve_math():
     query = 'solve ' + query
     query_for_plot = query
 
-    AppID_full = 'G39592-5E4JX9R2AK'
+    AppID_full = #######
 
     query = query.replace('x', 'щ')
 
